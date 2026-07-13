@@ -61,26 +61,24 @@ export function TraderDetailsModal({ isOpen, onClose, wallet }: TraderDetailsMod
     return formatWei(somiAsset.balance, somiAsset.decimals);
   };
 
-  if (!isOpen || !wallet) return null;
-
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {isOpen && wallet && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-[#0D0D0D]/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0D0D0D]/80 backdrop-blur-sm cursor-pointer"
           onClick={onClose}
-        />
-        
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ type: "spring", duration: 0.5, bounce: 0 }}
-          className="relative w-full max-w-lg bg-[#151515] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
         >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: "spring", duration: 0.5, bounce: 0 }}
+            className="relative w-full max-w-lg bg-[#151515] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
           <div className="p-6 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -171,7 +169,8 @@ export function TraderDetailsModal({ isOpen, onClose, wallet }: TraderDetailsMod
             )}
           </div>
         </motion.div>
-      </div>
-    </AnimatePresence>
+      </motion.div>
+    )}
+  </AnimatePresence>
   );
 }
