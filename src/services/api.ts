@@ -39,14 +39,14 @@ export async function fetchSomiMarketData(): Promise<MarketData> {
 
 export async function fetchTraderBalance(wallet: string): Promise<TraderBalanceResponse> {
   const { data } = await axios.get<TraderBalanceResponse>(
-    `https://prophecypoints.somnia.network/api/claim/scan?address=${wallet}&chainId=5031`
+    `/api/claim/scan?address=${wallet}&chainId=5031`
   );
   return data;
 }
 
 export async function fetchTraderForwards(wallet: string): Promise<TraderForwardsResponse> {
   const { data } = await axios.get<TraderForwardsResponse>(
-    `https://api.prophecy.social/api/v1/forwards/${wallet}?chainId=5031`
+    `/api/v1/forwards/${wallet}?chainId=5031`
   );
   return data;
 }

@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/claim/:path*",
+      "destination": "https://prophecypoints.somnia.network/api/claim/:path*"
+    },
+    {
+      "source": "/api/v1/forwards/:path*",
+      "destination": "https://api.prophecy.social/api/v1/forwards/:path*"
+    }
+  ]
+}
