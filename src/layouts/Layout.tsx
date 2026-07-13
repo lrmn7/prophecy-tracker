@@ -45,7 +45,7 @@ export function Layout({ children }: LayoutProps) {
       <footer className="border-t border-white/[0.04] py-8 mt-16">
         <div className="max-w-6xl mx-auto px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/70">
           <span className="flex items-center gap-1">
-            made with <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500 inline" /> by <a href="https://lrmn.wtf" target="_blank" rel="noopener noreferrer" className="text-white hover:text-emerald-400 transition-colors font-medium">L RMN</a>
+            made with <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500 inline" /> by <a href="https://www.youtube.com/watch?v=Aq5WXmQQooo" target="_blank" rel="noopener noreferrer" className="text-white hover:text-emerald-400 transition-colors font-medium">ZIO GANTENG</a>
           </span>
           <span>Data sourced from the official <a href="https://prophecy.social" target="_blank" rel="noopener noreferrer" className="text-white hover:text-emerald-400 underline decoration-white/25 hover:decoration-emerald-400/50 transition-colors">Prophecy Social</a></span>
         </div>
