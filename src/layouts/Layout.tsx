@@ -2,6 +2,20 @@ import { motion } from 'framer-motion';
 import { SmoothScroll } from '../components/ui/SmoothScroll';
 import { Heart } from 'lucide-react';
 
+const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+  </svg>
+);
+
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -29,6 +43,15 @@ export function Layout({ children }: LayoutProps) {
             <a href="#charts" className="hover:text-white/70 transition-colors hidden md:inline">Charts</a>
             <a href="#timeline" className="hover:text-white/70 transition-colors hidden lg:inline">Timeline</a>
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Live" />
+            <a 
+              href="https://github.com/lrmn7/prophecy-tracker" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-white/40 hover:text-white transition-colors flex items-center gap-1.5 ml-1 border-l border-white/10 pl-3.5"
+              title="GitHub Repository"
+            >
+              <GithubIcon className="w-4 h-4" />
+            </a>
           </nav>
         </div>
       </header>
