@@ -4,7 +4,7 @@ import type { ActiveSeason, SeasonsResponse, TradersResponse, MarketData, Trader
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 15_000,
+  timeout: 30_000,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -18,9 +18,13 @@ export async function fetchSeasons(): Promise<SeasonsResponse> {
   return data;
 }
 
-export async function fetchTopTraders(): Promise<TradersResponse> {
+export async function fetchTopTraders(season?: string): Promise<TradersResponse> {
+  const params: Record<string, any> = { limit: 200, audience: 'humans' };
+  if (season) {
+    params.season = season;
+  }
   const { data } = await api.get<TradersResponse>('/stats/top-traders', {
-    params: { limit: 200, audience: 'humans' },
+    params,
   });
   return data;
 }

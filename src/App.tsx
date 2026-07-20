@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Layout } from './layouts/Layout';
 import { HeroSection } from './components/sections/HeroSection';
 import { RewardOverviewSection } from './components/sections/RewardOverviewSection';
@@ -15,10 +15,37 @@ import { calculateRankedTraders, calculateRewardOverview } from './utils/rewards
 import { TOTAL_REWARD_POOL } from './constants';
 
 function App() {
-  const activeSeason = useActiveSeason();
   const seasons = useSeasons();
-  const topTraders = useTopTraders();
+  const [selectedSeasonId, setSelectedSeasonId] = useState<string>('');
+
+  useEffect(() => {
+    if (seasons.data && seasons.data.length > 0 && !selectedSeasonId) {
+      const active = seasons.data.find((s) => s.status === 'active');
+      setSelectedSeasonId(active ? active.id : seasons.data[0].id);
+    }
+  }, [seasons.data, selectedSeasonId]);
+
+  const activeSeason = useActiveSeason();
+  const topTraders = useTopTraders(selectedSeasonId || undefined);
   const market = useMarketData();
+
+  const currentSeasonDetails = useMemo(() => {
+    if (!seasons.data || !selectedSeasonId) return activeSeason.data;
+    // Map to activeSeason shape if necessary, or just cast (both have id, name, status, startsAt, endsAt, snapshotAt)
+    const found = seasons.data.find((s) => s.id === selectedSeasonId);
+    if (!found) return activeSeason.data;
+    
+    // Add default daysRemaining / progressPct calculated on the fly if it's the active one
+    if (found.status === 'active' && activeSeason.data) {
+      return activeSeason.data;
+    }
+    
+    return {
+      ...found,
+      daysRemaining: 0,
+      progressPct: found.snapshotAt ? 100 : 0
+    };
+  }, [seasons.data, selectedSeasonId, activeSeason.data]);
 
   const somiPrice = market.data?.price || 0;
 
@@ -33,16 +60,20 @@ function App() {
   );
 
   return (
-    <Layout>
+    <Layout
+      seasons={seasons.data || undefined}
+      selectedSeasonId={selectedSeasonId}
+      onSeasonChange={setSelectedSeasonId}
+    >
       {activeSeason.loading ? (
         <HeroSkeleton />
       ) : activeSeason.error ? (
         <div className="py-20">
           <ErrorState message={activeSeason.error} onRetry={activeSeason.refetch} />
         </div>
-      ) : activeSeason.data ? (
+      ) : currentSeasonDetails ? (
         <HeroSection 
-          season={activeSeason.data} 
+          season={currentSeasonDetails} 
           market={market.data || undefined}
           overview={rewardOverview}
           nextRefresh={market.nextRefresh}
@@ -71,7 +102,12 @@ function App() {
           <LeaderboardSkeleton />
         </div>
       ) : rankedTraders.length > 0 ? (
-        <LeaderboardSection traders={rankedTraders} />
+        <LeaderboardSection 
+          traders={rankedTraders} 
+          seasons={seasons.data || undefined}
+          selectedSeasonId={selectedSeasonId}
+          onSeasonChange={setSelectedSeasonId}
+        />
       ) : null}
       {!topTraders.loading && rankedTraders.length > 0 && (
         <AnalyticsSection overview={rewardOverview} traderCount={rankedTraders.length} />
