@@ -19,14 +19,33 @@ export async function fetchSeasons(): Promise<SeasonsResponse> {
 }
 
 export async function fetchTopTraders(season?: string, limit?: number): Promise<TradersResponse> {
-  const params: Record<string, any> = { limit: limit ?? LEADERBOARD_MAX, audience: 'humans' };
-  if (season) {
-    params.season = season;
+  const reqLimit = limit ?? LEADERBOARD_MAX;
+  const maxChunk = 250;
+
+  if (reqLimit <= maxChunk) {
+    const params: Record<string, any> = { limit: reqLimit, audience: 'humans' };
+    if (season) {
+      params.season = season;
+    }
+    const { data } = await api.get<TradersResponse>('/stats/top-traders', {
+      params,
+    });
+    return data;
   }
-  const { data } = await api.get<TradersResponse>('/stats/top-traders', {
-    params,
-  });
-  return data;
+
+  const requests = [];
+  for (let offset = 0; offset < reqLimit; offset += maxChunk) {
+    const chunkLimit = Math.min(maxChunk, reqLimit - offset);
+    const params: Record<string, any> = { limit: chunkLimit, offset, audience: 'humans' };
+    if (season) {
+      params.season = season;
+    }
+    requests.push(api.get<TradersResponse>('/stats/top-traders', { params }));
+  }
+
+  const responses = await Promise.all(requests);
+  const allTraders = responses.flatMap((res) => res.data.traders || []);
+  return { traders: allTraders };
 }
 
 export async function fetchSomiMarketData(): Promise<MarketData> {
