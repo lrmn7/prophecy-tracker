@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_BASE_URL } from '../constants';
+import { API_BASE_URL, LEADERBOARD_MAX } from '../constants';
 import type { ActiveSeason, SeasonsResponse, TradersResponse, MarketData, TraderBalanceResponse, TraderForwardsResponse } from '../types';
 
 const api = axios.create({
@@ -19,7 +19,7 @@ export async function fetchSeasons(): Promise<SeasonsResponse> {
 }
 
 export async function fetchTopTraders(season?: string): Promise<TradersResponse> {
-  const params: Record<string, any> = { limit: 200, audience: 'humans' };
+  const params: Record<string, any> = { limit: LEADERBOARD_MAX, audience: 'humans' };
   if (season) {
     params.season = season;
   }
