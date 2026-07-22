@@ -7,6 +7,7 @@ export interface ActiveSeason {
   snapshotAt: string | null;
   daysRemaining: number;
   progressPct: number;
+  rewardedRanks?: number;
 }
 
 export interface Season {
@@ -16,6 +17,7 @@ export interface Season {
   startsAt: string;
   endsAt: string;
   snapshotAt: string | null;
+  rewardedRanks?: number;
 }
 
 export interface SeasonsResponse {

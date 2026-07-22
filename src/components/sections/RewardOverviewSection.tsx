@@ -9,16 +9,17 @@ import { AnimatedNumber } from '../motion/AnimatedNumber';
 interface RewardOverviewSectionProps {
   overview: RewardOverviewType;
   market: MarketData;
+  limit?: number;
 }
 
-export function RewardOverviewSection({ overview, market }: RewardOverviewSectionProps) {
+export function RewardOverviewSection({ overview, market, limit = 200 }: RewardOverviewSectionProps) {
   const stats = [
     { label: 'Reward Pool', value: <span className="flex items-center gap-1"><AnimatedNumber value={overview.rewardPool} format="number" /> <SomiLogo className="text-[0.6em]" /></span>, sub: `≈ ${formatCurrency(overview.rewardPoolUsd)}`, accent: 'emerald' as const },
     { label: 'SOMI Price', value: <AnimatedNumber value={market.price} format="currency" decimals={4} />, sub: 'Current Market Rate', accent: 'default' as const },
     { label: 'Average Reward', value: <span className="flex items-center gap-1"><AnimatedNumber value={Math.round(overview.averageReward)} format="number" /> <SomiLogo className="text-[0.6em]" /></span>, sub: `≈ ${formatCurrency(overview.averageRewardUsd)}`, accent: 'default' as const },
     { label: 'Largest Reward', value: <span className="flex items-center gap-1"><AnimatedNumber value={Math.round(overview.largestReward)} format="number" /> <SomiLogo className="text-[0.6em]" /></span>, sub: `≈ ${formatCurrency(overview.largestRewardUsd)}`, accent: 'orange' as const },
     { label: 'Reward / PP', value: <span className="flex items-center gap-1"><AnimatedNumber value={overview.rewardPerPP} format="number" decimals={4} /> <SomiLogo className="text-[0.6em]" /></span>, sub: `≈ ${formatCurrency(overview.rewardPerPP * market.price, 4)}`, accent: 'default' as const },
-    { label: 'Total PP', value: <AnimatedNumber value={overview.totalPP} format="compact" />, sub: 'Top 200 Traders', accent: 'default' as const },
+    { label: 'Total PP', value: <AnimatedNumber value={overview.totalPP} format="compact" />, sub: `Top ${limit} Traders`, accent: 'default' as const },
   ];
 
   return (
@@ -26,7 +27,7 @@ export function RewardOverviewSection({ overview, market }: RewardOverviewSectio
       <SectionHeader
         eyebrow="Rewards"
         title="Reward Overview"
-        description="Estimated SOMI reward distribution based on current top 200 performance."
+        description={`Estimated SOMI reward distribution based on current top ${limit} performance.`}
       />
 
       <ScrollReveal staggerChildren={true} staggerDelay={0.05} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

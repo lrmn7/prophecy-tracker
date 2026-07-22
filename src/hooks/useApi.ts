@@ -49,21 +49,23 @@ const fetchSeasonsFn = async () => {
   const res = await fetchSeasons();
   return res.seasons;
 };
-export function useTopTraders(season?: string): UseApiState<Trader[]> {
+export function useTopTraders(season?: string, limit?: number): UseApiState<Trader[]> {
   const fetchTopTradersFn = useCallback(async () => {
-    const res = await fetchTopTraders(season);
+    const res = await fetchTopTraders(season, limit);
     return res.traders;
-  }, [season]);
+  }, [season, limit]);
 
   const state = useApi(fetchTopTradersFn, season ? undefined : 60000);
 
   const lastSeasonRef = useRef(season);
+  const lastLimitRef = useRef(limit);
   useEffect(() => {
-    if (lastSeasonRef.current !== season) {
+    if (lastSeasonRef.current !== season || lastLimitRef.current !== limit) {
       lastSeasonRef.current = season;
+      lastLimitRef.current = limit;
       state.refetch(false);
     }
-  }, [season, state]);
+  }, [season, limit, state]);
 
   return state;
 }

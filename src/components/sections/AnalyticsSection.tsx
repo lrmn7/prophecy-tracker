@@ -8,9 +8,10 @@ import type { RewardOverview } from '../../types';
 interface AnalyticsSectionProps {
   overview: RewardOverview;
   traderCount: number;
+  limit?: number;
 }
 
-export function AnalyticsSection({ overview, traderCount }: AnalyticsSectionProps) {
+export function AnalyticsSection({ overview, traderCount, limit = 200 }: AnalyticsSectionProps) {
   const stats = [
     { label: 'Total PP', value: formatNumber(overview.totalPP), accent: 'emerald' as const },
     { label: 'Average PP', value: formatNumber(Math.round(overview.averagePP)), accent: 'default' as const },
@@ -19,7 +20,7 @@ export function AnalyticsSection({ overview, traderCount }: AnalyticsSectionProp
     { label: 'Average Events', value: formatNumber(Math.round(overview.averageEvents)), accent: 'default' as const },
     { label: 'Highest Reward', value: <span className="flex items-center gap-1">{formatNumber(Math.round(overview.largestReward))} <SomiLogo className="text-[0.6em]" /></span>, sub: `≈ ${formatCurrency(overview.largestRewardUsd)}`, accent: 'amber' as const },
     { label: 'Average Reward', value: <span className="flex items-center gap-1">{formatNumber(Math.round(overview.averageReward))} <SomiLogo className="text-[0.6em]" /></span>, sub: `≈ ${formatCurrency(overview.averageRewardUsd)}`, accent: 'default' as const },
-    { label: 'Total Traders', value: formatNumber(traderCount), sub: 'in the top 200', accent: 'default' as const },
+    { label: 'Total Traders', value: formatNumber(traderCount), sub: `in the top ${limit}`, accent: 'default' as const },
   ];
 
   return (
@@ -27,7 +28,7 @@ export function AnalyticsSection({ overview, traderCount }: AnalyticsSectionProp
       <SectionHeader
         eyebrow="Analytics"
         title="Performance Metrics"
-        description="Derived statistics from the current top 200 traders."
+        description={`Derived statistics from the current top ${limit} traders.`}
       />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

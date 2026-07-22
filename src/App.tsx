@@ -26,16 +26,11 @@ function App() {
   }, [seasons.data, selectedSeasonId]);
 
   const activeSeason = useActiveSeason();
-  const topTraders = useTopTraders(selectedSeasonId || undefined);
-  const market = useMarketData();
-
   const currentSeasonDetails = useMemo(() => {
     if (!seasons.data || !selectedSeasonId) return activeSeason.data;
-    // Map to activeSeason shape if necessary, or just cast (both have id, name, status, startsAt, endsAt, snapshotAt)
     const found = seasons.data.find((s) => s.id === selectedSeasonId);
     if (!found) return activeSeason.data;
     
-    // Add default daysRemaining / progressPct calculated on the fly if it's the active one
     if (found.status === 'active' && activeSeason.data) {
       return activeSeason.data;
     }
@@ -46,6 +41,10 @@ function App() {
       progressPct: found.snapshotAt ? 100 : 0
     };
   }, [seasons.data, selectedSeasonId, activeSeason.data]);
+
+  const dynamicLimit = currentSeasonDetails?.rewardedRanks ?? 200;
+  const topTraders = useTopTraders(selectedSeasonId || undefined, dynamicLimit);
+  const market = useMarketData();
 
   const somiPrice = market.data?.price || 0;
 
@@ -90,11 +89,11 @@ function App() {
           <ErrorState message={topTraders.error} onRetry={topTraders.refetch} />
         </div>
       ) : rankedTraders.length > 0 && market.data ? (
-        <RewardOverviewSection overview={rewardOverview} market={market.data} />
+        <RewardOverviewSection overview={rewardOverview} market={market.data} limit={dynamicLimit} />
       ) : null}
       {!topTraders.loading && rankedTraders.length > 0 && market.data && (
         <div className="py-8">
-          <RewardBreakdownPanel overview={rewardOverview} market={market.data} />
+          <RewardBreakdownPanel overview={rewardOverview} market={market.data} limit={dynamicLimit} />
         </div>
       )}
       {topTraders.loading ? (
@@ -107,10 +106,11 @@ function App() {
           seasons={seasons.data || undefined}
           selectedSeasonId={selectedSeasonId}
           onSeasonChange={setSelectedSeasonId}
+          limit={dynamicLimit}
         />
       ) : null}
       {!topTraders.loading && rankedTraders.length > 0 && (
-        <AnalyticsSection overview={rewardOverview} traderCount={rankedTraders.length} />
+        <AnalyticsSection overview={rewardOverview} traderCount={rankedTraders.length} limit={dynamicLimit} />
       )}
       {!topTraders.loading && rankedTraders.length > 0 && (
         <ChartsSection traders={rankedTraders} />

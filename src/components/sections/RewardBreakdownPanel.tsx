@@ -9,9 +9,10 @@ import type { MarketData, RewardOverview } from '../../types';
 interface RewardBreakdownPanelProps {
   overview: RewardOverview;
   market: MarketData;
+  limit?: number;
 }
 
-export function RewardBreakdownPanel({ overview, market }: RewardBreakdownPanelProps) {
+export function RewardBreakdownPanel({ overview, market, limit = 200 }: RewardBreakdownPanelProps) {
   const [calculatorPP, setCalculatorPP] = useState<string>('25000');
   
   const numericPP = parseInt(calculatorPP.replace(/,/g, '')) || 0;
@@ -27,7 +28,7 @@ export function RewardBreakdownPanel({ overview, market }: RewardBreakdownPanelP
             Fair Reward Distribution
           </h3>
           <p className="text-sm text-white/40 max-w-lg mx-auto">
-            Transparent breakdown of how the <SomiLogo className="inline h-3 opacity-60" /> reward pool is distributed fairly among the Top 200 traders based on their Prophecy Points (PP).
+            Transparent breakdown of how the <SomiLogo className="inline h-3 opacity-60" /> reward pool is distributed fairly among the Top {limit} traders based on their Prophecy Points (PP).
           </p>
         </div>
         <div className="relative max-w-4xl mx-auto flex flex-col items-center">
@@ -41,7 +42,7 @@ export function RewardBreakdownPanel({ overview, market }: RewardBreakdownPanelP
             
             <div className="flex flex-col items-center gap-2 z-10 w-full md:w-auto">
               <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center w-full md:min-w-[200px]">
-                <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/40 mb-1 text-center">Total Top 200 PP</span>
+                <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/40 mb-1 text-center">Total Top {limit} PP</span>
                 <span className="text-lg md:text-xl font-bold text-white tabular-nums">{formatNumber(overview.totalPP)} PP</span>
               </div>
             </div>

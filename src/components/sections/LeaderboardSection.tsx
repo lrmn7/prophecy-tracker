@@ -14,12 +14,13 @@ interface LeaderboardSectionProps {
   seasons?: Season[];
   selectedSeasonId?: string;
   onSeasonChange?: (id: string) => void;
+  limit?: number;
 }
 
 type SortField = 'rank' | 'totalPP' | 'totalEvents' | 'estimatedReward' | 'estimatedUsdReward';
 type SortDir = 'asc' | 'desc';
 
-export function LeaderboardSection({ traders, seasons, selectedSeasonId, onSeasonChange }: LeaderboardSectionProps) {
+export function LeaderboardSection({ traders, seasons, selectedSeasonId, onSeasonChange, limit = 200 }: LeaderboardSectionProps) {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [copiedWallet, setCopiedWallet] = useState<string | null>(null);
@@ -101,7 +102,7 @@ export function LeaderboardSection({ traders, seasons, selectedSeasonId, onSeaso
       <ScrollReveal>
         <SectionHeader
           eyebrow="Leaderboard"
-          title="Top 200 Traders"
+          title={`Top ${limit} Traders`}
           description="Ranked by Prophecy Points with estimated reward distribution."
         />
       <div className="mb-8 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">

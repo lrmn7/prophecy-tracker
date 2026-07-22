@@ -18,8 +18,8 @@ export async function fetchSeasons(): Promise<SeasonsResponse> {
   return data;
 }
 
-export async function fetchTopTraders(season?: string): Promise<TradersResponse> {
-  const params: Record<string, any> = { limit: LEADERBOARD_MAX, audience: 'humans' };
+export async function fetchTopTraders(season?: string, limit?: number): Promise<TradersResponse> {
+  const params: Record<string, any> = { limit: limit ?? LEADERBOARD_MAX, audience: 'humans' };
   if (season) {
     params.season = season;
   }
