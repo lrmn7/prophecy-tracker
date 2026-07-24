@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { SmoothScroll } from '../components/ui/SmoothScroll';
-import { Heart, ChevronDown } from 'lucide-react';
-import type { Season } from '../types';
+import { Heart } from 'lucide-react';
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -19,12 +18,9 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 interface LayoutProps {
   children: React.ReactNode;
-  seasons?: Season[];
-  selectedSeasonId?: string;
-  onSeasonChange?: (id: string) => void;
 }
 
-export function Layout({ children, seasons, selectedSeasonId, onSeasonChange }: LayoutProps) {
+export function Layout({ children }: LayoutProps) {
   return (
     <SmoothScroll>
       <div className="min-h-dvh bg-[#0D0D0D] text-white">
@@ -43,27 +39,8 @@ export function Layout({ children, seasons, selectedSeasonId, onSeasonChange }: 
           <nav className="flex items-center gap-5 text-xs text-white/40">
             <a href="#snapshot" className="hover:text-white/70 transition-colors hidden sm:inline">Snapshot</a>
             <a href="#rewards" className="hover:text-white/70 transition-colors hidden sm:inline">Rewards</a>
-            <div className="flex items-center gap-2">
-              <a href="#leaderboard" className="hover:text-white/70 transition-colors hidden md:inline">Leaderboard</a>
-              {seasons && seasons.length > 0 && (
-                <div className="relative inline-flex items-center hidden md:inline-flex">
-                  <select
-                    value={selectedSeasonId}
-                    onChange={(e) => onSeasonChange?.(e.target.value)}
-                    className="appearance-none bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] rounded-full pl-3 pr-7 py-0.5 text-[10px] text-white/80 hover:text-white focus:outline-none focus:border-emerald-500/50 cursor-pointer transition-all duration-200"
-                  >
-                    {seasons.map((s) => (
-                      <option key={s.id} value={s.id} className="bg-[#151515] text-white/80">
-                        {s.name} {s.status === 'active' ? '(Live)' : ''}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="w-3 h-3 text-white/40 absolute right-2 pointer-events-none" />
-                </div>
-              )}
-            </div>
+            <a href="#leaderboard" className="hover:text-white/70 transition-colors hidden md:inline">Leaderboard</a>
             <a href="#charts" className="hover:text-white/70 transition-colors hidden md:inline">Charts</a>
-            <a href="#timeline" className="hover:text-white/70 transition-colors hidden lg:inline">Timeline</a>
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Live" />
             <a 
               href="https://github.com/lrmn7/prophecy-tracker" 

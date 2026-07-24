@@ -1,26 +1,23 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Copy, Check, ChevronLeft, ChevronRight, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { Search, Copy, Check, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { Section, SectionHeader } from '../ui/Section';
 import { GlassCard } from '../ui/GlassCard';
 import { SomiLogo } from '../ui/SomiLogo';
 import { ScrollReveal } from '../motion/ScrollReveal';
 import { TraderDetailsModal } from './TraderDetailsModal';
 import { shortenWallet, formatNumber, formatCurrency, copyToClipboard } from '../../utils/format';
-import type { RankedTrader, Season } from '../../types';
+import type { RankedTrader } from '../../types';
 
 interface LeaderboardSectionProps {
   traders: RankedTrader[];
-  seasons?: Season[];
-  selectedSeasonId?: string;
-  onSeasonChange?: (id: string) => void;
   limit?: number;
 }
 
 type SortField = 'rank' | 'totalPP' | 'totalEvents' | 'estimatedReward' | 'estimatedUsdReward';
 type SortDir = 'asc' | 'desc';
 
-export function LeaderboardSection({ traders, seasons, selectedSeasonId, onSeasonChange, limit = 200 }: LeaderboardSectionProps) {
+export function LeaderboardSection({ traders, limit = 200 }: LeaderboardSectionProps) {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [copiedWallet, setCopiedWallet] = useState<string | null>(null);
@@ -105,8 +102,8 @@ export function LeaderboardSection({ traders, seasons, selectedSeasonId, onSeaso
           title={`Top ${limit} Traders`}
           description="Ranked by Prophecy Points with estimated reward distribution."
         />
-      <div className="mb-8 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
-        <div className="relative max-w-md flex-1">
+      <div className="mb-8 max-w-md">
+        <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
           <input
             type="text"
@@ -119,23 +116,6 @@ export function LeaderboardSection({ traders, seasons, selectedSeasonId, onSeaso
             className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm text-white placeholder-white/25 focus:outline-none focus:border-white/[0.16] focus:bg-white/[0.06] transition-all duration-200"
           />
         </div>
-        
-        {seasons && seasons.length > 0 && (
-          <div className="relative inline-flex items-center">
-            <select
-              value={selectedSeasonId}
-              onChange={(e) => onSeasonChange?.(e.target.value)}
-              className="appearance-none bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.08] rounded-xl pl-4 pr-10 py-3 text-sm text-white/80 hover:text-white focus:outline-none focus:border-emerald-500/50 cursor-pointer transition-all duration-200"
-            >
-              {seasons.map((s) => (
-                <option key={s.id} value={s.id} className="bg-[#151515] text-white/80">
-                  {s.name} {s.status === 'active' ? '(Live)' : ''}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="w-4 h-4 text-white/40 absolute right-3.5 pointer-events-none" />
-          </div>
-        )}
       </div>
       <div className="hidden md:grid grid-cols-[60px_1fr_100px_90px_80px_130px_130px] gap-4 px-6 pb-3">
         <SortButton field="rank" label="Rank" />
