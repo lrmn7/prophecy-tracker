@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { fetchActiveSeason, fetchSeasons, fetchTopTraders } from '../services/api';
-import type { ActiveSeason, Season, Trader } from '../types';
+import type { Trader } from '../types';
+import season2TradersData from '../data/season2-traders.json';
 
 interface UseApiState<T> {
   data: T | null;
@@ -9,72 +8,12 @@ interface UseApiState<T> {
   refetch: (silent?: boolean) => void;
 }
 
-function useApi<T>(fetcher: () => Promise<T>, pollingInterval?: number): UseApiState<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const fetcherRef = useRef(fetcher);
-  fetcherRef.current = fetcher;
-
-  const refetch = useCallback((silent: boolean = false) => {
-    if (!silent) setLoading(true);
-    setError(null);
-    fetcherRef.current()
-      .then(setData)
-      .catch((err: unknown) => {
-        const message = err instanceof Error ? err.message : 'An unknown error occurred';
-        setError(message);
-      })
-      .finally(() => {
-        if (!silent) setLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    refetch(false); // initial fetch is not silent
-
-    if (pollingInterval) {
-      const intervalId = setInterval(() => {
-        refetch(true);
-      }, pollingInterval);
-      return () => clearInterval(intervalId);
-    }
-  }, [refetch, pollingInterval]);
-
-  return { data, loading, error, refetch };
-}
-
-const fetchActiveSeasonFn = () => fetchActiveSeason();
-const fetchSeasonsFn = async () => {
-  const res = await fetchSeasons();
-  return res.seasons;
-};
-export function useTopTraders(season?: string, limit?: number): UseApiState<Trader[]> {
-  const fetchTopTradersFn = useCallback(async () => {
-    const res = await fetchTopTraders(season, limit);
-    return res.traders;
-  }, [season, limit]);
-
-  const state = useApi(fetchTopTradersFn, season ? undefined : 60000);
-
-  const lastSeasonRef = useRef(season);
-  const lastLimitRef = useRef(limit);
-  useEffect(() => {
-    if (lastSeasonRef.current !== season || lastLimitRef.current !== limit) {
-      lastSeasonRef.current = season;
-      lastLimitRef.current = limit;
-      state.refetch(false);
-    }
-  }, [season, limit, state]);
-
-  return state;
-}
-
-export function useActiveSeason(): UseApiState<ActiveSeason> {
-  return useApi(fetchActiveSeasonFn, 60000);
-}
-
-export function useSeasons(): UseApiState<Season[]> {
-  return useApi(fetchSeasonsFn);
+export function useTopTraders(_season?: string, _limit?: number): UseApiState<Trader[]> {
+  return {
+    data: season2TradersData.traders as Trader[],
+    loading: false,
+    error: null,
+    refetch: () => {},
+  };
 }
 
