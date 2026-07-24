@@ -16,7 +16,8 @@ export function RewardBreakdownPanel({ overview, market, limit = 200 }: RewardBr
   const [calculatorPP, setCalculatorPP] = useState<string>('25000');
   
   const numericPP = parseInt(calculatorPP.replace(/,/g, '')) || 0;
-  const exampleReward = numericPP * overview.rewardPerPP;
+  const weightedPP = Math.pow(numericPP, 1.5);
+  const exampleReward = weightedPP * (overview.rewardPerWeightedPP || 0);
   const exampleUsd = exampleReward * market.price;
 
   return (
@@ -25,10 +26,10 @@ export function RewardBreakdownPanel({ overview, market, limit = 200 }: RewardBr
         <div className="mb-10 text-center">
           <h3 className="text-xl font-bold tracking-tight text-white mb-2 flex items-center justify-center gap-2">
             <Calculator className="w-5 h-5 text-emerald-400" />
-            Fair Reward Distribution
+            Convex Reward Distribution
           </h3>
           <p className="text-sm text-white/40 max-w-lg mx-auto">
-            Transparent breakdown of how the <SomiLogo className="inline h-3 opacity-60" /> reward pool is distributed fairly among the Top {limit} traders based on their Prophecy Points (PP).
+            Transparent breakdown of how the <SomiLogo className="inline h-3 opacity-60" /> reward pool is distributed fairly among the Top {limit} traders based on their weighted points ($PP^{1.5}$).
           </p>
         </div>
         <div className="relative max-w-4xl mx-auto flex flex-col items-center">
@@ -42,8 +43,8 @@ export function RewardBreakdownPanel({ overview, market, limit = 200 }: RewardBr
             
             <div className="flex flex-col items-center gap-2 z-10 w-full md:w-auto">
               <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center w-full md:min-w-[200px]">
-                <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/40 mb-1 text-center">Total Top {limit} PP</span>
-                <span className="text-lg md:text-xl font-bold text-white tabular-nums">{formatNumber(overview.totalPP)} PP</span>
+                <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/40 mb-1 text-center">Total Top {limit} $PP^{1.5}$</span>
+                <span className="text-lg md:text-xl font-bold text-white tabular-nums">{formatNumber(overview.totalWeightedPP || 0)}</span>
               </div>
             </div>
             <div className="hidden md:block absolute top-full left-[120px] right-[120px] h-10 border-b-[2px] border-l-[2px] border-r-[2px] border-white/10 rounded-b-3xl -z-10" />
@@ -53,10 +54,10 @@ export function RewardBreakdownPanel({ overview, market, limit = 200 }: RewardBr
           <div className="hidden md:block h-20" /> {/* Spacer for desktop lines */}
           <div className="z-10 bg-[#151515] border border-white/10 rounded-2xl p-5 flex flex-col items-center min-w-[280px]">
             <div className="text-[10px] text-white/30 uppercase tracking-widest mb-2 px-3 py-1 bg-white/5 rounded-full">
-              Pool ÷ Total PP
+              Pool ÷ Sum of $PP^{1.5}$
             </div>
-            <span className="text-sm text-white/50 mb-1">Reward Per 1 PP</span>
-            <span className="text-2xl font-bold text-emerald-400 tabular-nums flex items-center gap-1.5">{overview.rewardPerPP.toFixed(6)} <SomiLogo className="text-[0.6em]" /></span>
+            <span className="text-sm text-white/50 mb-1">Base Multiplier (Per 1 $PP^{1.5}$)</span>
+            <span className="text-2xl font-bold text-emerald-400 tabular-nums flex items-center gap-1.5">{(overview.rewardPerWeightedPP || 0).toFixed(8)} <SomiLogo className="text-[0.6em]" /></span>
           </div>
           <div className="w-px h-12 bg-white/10 my-2" />
           <ArrowDown className="w-4 h-4 text-white/20 mb-2" />
@@ -75,6 +76,9 @@ export function RewardBreakdownPanel({ overview, market, limit = 200 }: RewardBr
                   className="w-full bg-transparent text-center font-bold text-white tabular-nums border-b border-emerald-400/30 focus:border-emerald-400 focus:outline-none transition-colors pb-1"
                   placeholder="0"
                 />
+                <span className="text-[9px] text-white/30 mt-2">
+                  Weighted: {formatNumber(weightedPP, 0)} ($PP^{1.5}$)
+                </span>
               </div>
               <div className="hidden md:flex justify-center text-white/20">
                 <span className="text-xl font-bold">×</span>
@@ -83,8 +87,9 @@ export function RewardBreakdownPanel({ overview, market, limit = 200 }: RewardBr
                 <X className="w-4 h-4" />
               </div>
               <div className="bg-white/5 border border-white/5 rounded-xl p-4 flex flex-col items-center text-center">
-                <span className="text-[10px] uppercase tracking-widest text-white/40 mb-1">Reward per PP</span>
-                <span className="font-bold text-emerald-400/80 tabular-nums">{overview.rewardPerPP.toFixed(4)}</span>
+                <span className="text-[10px] uppercase tracking-widest text-white/40 mb-1">Base Multiplier</span>
+                <span className="font-bold text-emerald-400/80 tabular-nums">{(overview.rewardPerWeightedPP || 0).toFixed(6)}</span>
+                <span className="text-[9px] text-white/30 mt-2">Per 1 $PP^{1.5}$</span>
               </div>
             </div>
 

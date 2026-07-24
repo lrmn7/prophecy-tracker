@@ -88,6 +88,8 @@ export interface RewardOverview {
   largestReward: number; 
   largestRewardUsd: number; 
   rewardPerPP: number; 
+  totalWeightedPP?: number;
+  rewardPerWeightedPP?: number;
 }
 
 export interface MarketData {

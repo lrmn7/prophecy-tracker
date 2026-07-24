@@ -5,9 +5,16 @@ export function calculateRankedTraders(
   somiPrice: number = 0
 ): RankedTrader[] {
   const sorted = [...traders].sort((a, b) => b.totalPP - a.totalPP);
-  const totalPP = sorted.reduce((sum, t) => sum + t.totalPP, 0);
+  
+  // Calculate weighted points for each trader using the 1.5 exponent
+  const weightedTraders = sorted.map((t) => ({
+    ...t,
+    weightedPP: Math.pow(t.totalPP, 1.5),
+  }));
 
-  if (totalPP === 0) {
+  const totalWeightedPP = weightedTraders.reduce((sum, t) => sum + t.weightedPP, 0);
+
+  if (totalWeightedPP === 0) {
     return sorted.map((t, i) => ({
       ...t,
       rank: i + 1,
@@ -18,10 +25,12 @@ export function calculateRankedTraders(
     }));
   }
 
-  return sorted.map((t, i) => {
-    const share = t.totalPP / totalPP;
+  return weightedTraders.map((t, i) => {
+    const share = t.weightedPP / totalWeightedPP;
     return {
-      ...t,
+      wallet: t.wallet,
+      totalPP: t.totalPP,
+      totalEvents: t.totalEvents,
       rank: i + 1,
       share,
       estimatedReward: share * rewardPool,
@@ -52,11 +61,14 @@ export function calculateRewardOverview(
       largestReward: 0,
       largestRewardUsd: 0,
       rewardPerPP: 0,
+      totalWeightedPP: 0,
+      rewardPerWeightedPP: 0,
     };
   }
 
   const pps = rankedTraders.map((t) => t.totalPP);
   const totalPP = pps.reduce((a, b) => a + b, 0);
+  const totalWeightedPP = rankedTraders.reduce((sum, t) => sum + Math.pow(t.totalPP, 1.5), 0);
   const totalEvents = rankedTraders.reduce((a, t) => a + t.totalEvents, 0);
   const rewards = rankedTraders.map((t) => t.estimatedReward);
 
@@ -82,5 +94,7 @@ export function calculateRewardOverview(
     largestReward: Math.max(...rewards),
     largestRewardUsd: Math.max(...rewards) * somiPrice,
     rewardPerPP: totalPP > 0 ? rewardPool / totalPP : 0,
+    totalWeightedPP,
+    rewardPerWeightedPP: totalWeightedPP > 0 ? rewardPool / totalWeightedPP : 0,
   };
 }
